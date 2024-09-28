@@ -23,6 +23,8 @@ IDENTIFICADOR 	(_|{LETRA})({DIGITO}|{LETRA}|_)*
 "*"          		{ return TOKEN_MULTIPLICACION; }
 "/"         		{ return TOKEN_DIVISION; }
 "=="         		{ return TOKEN_IGUALDAD; }
+"("                 { return TOKEN_IZQ_PAREN; }
+")"                 { return TOKEN_DER_PAREN; }
 "YY"         		{ return TOKEN_CONJUNCION; }
 "OO"				{ return TOKEN_DISYUNCION; }
 "AVANZAR"     		{ return TOKEN_AVANZAR; }
