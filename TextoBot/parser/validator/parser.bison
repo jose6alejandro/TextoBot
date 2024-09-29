@@ -50,9 +50,9 @@ factor : TOKEN_IDENTIFICADOR
       | TOKEN_IZQ_PAREN expresion TOKEN_DER_PAREN
       ;
 
-expresion : factor
-         | factor operador_aritmetico factor
+expresion : factor operador_aritmetico factor
          | proposicion
+         | comparador
          ;
 
 operador_aritmetico : TOKEN_SUMA
@@ -83,8 +83,7 @@ comando : TOKEN_AVANZAR
 
 bucle : TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_REPETIR;
 
-condicional : TOKEN_SI comparador TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_SI
-            | TOKEN_SI proposicion  TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_SI;
+condicional : TOKEN_SI expresion  TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_SI;
 
 procedimiento : TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_PROCEDIMIENTO
 %%
