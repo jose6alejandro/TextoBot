@@ -29,6 +29,7 @@ typedef enum
     TOKEN_FIN_PROCEDIMIENTO = 280,
     TOKEN_IZQ_PAREN = 281,
     TOKEN_DER_PAREN = 282,
+    TOKEN_DISTINTO_DE = 283,
 
 }
 token_t;
@@ -62,5 +63,6 @@ inline const char* to_str(token_t t)
         case TOKEN_FIN_PROCEDIMIENTO: return "FIN_PROCEDIMIENTO";
         case TOKEN_IZQ_PAREN: return "IZQ_PAREN";
         case TOKEN_DER_PAREN: return "DER_PAREN";
+        case TOKEN_DISTINTO_DE: return "DISTINTO_DE";
     }
 }
