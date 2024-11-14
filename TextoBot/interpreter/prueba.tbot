@@ -1,9 +1,12 @@
-RETROCEDER
-GIRAR_DER
-REPETIR 0:
+AVANZAR
+
+REPETIR 1:
     AVANZAR
-    REPETIR 0:
-        GIRAR_DER
-        GIRAR_IZQ
+    REPETIR 2:
+        SI 0:
+            GIRAR_IZQ
+            GIRAR_IZQ
+            GIRAR_IZQ
+        FIN_SI
     FIN_REPETIR
 FIN_REPETIR

@@ -15,6 +15,8 @@ public:
     virtual int eval() noexcept = 0;
 
     virtual std::string to_string() const noexcept = 0;
+
+    virtual void translate(std::ostream&) const noexcept{}
 };
 
 class Value : public Expression
@@ -43,6 +45,7 @@ public:
 
     virtual std::string operand_str() const noexcept = 0;
 
+
 protected:
     Expression* left_expression;
     Expression* right_expression;
@@ -56,6 +59,7 @@ public:
     int eval() noexcept override;
 
     std::string operand_str() const noexcept override;
+
 };
 
 class Subtraction : public BinaryOperation
@@ -66,6 +70,8 @@ public:
     int eval() noexcept override;
 
     std::string operand_str() const noexcept override;
+
+
 };
 
 class Multiplication : public BinaryOperation
@@ -76,6 +82,8 @@ public:
     int eval() noexcept override;
 
     std::string operand_str() const noexcept override;
+
+
 };
 
 class Division : public BinaryOperation
@@ -86,6 +94,8 @@ public:
     int eval() noexcept override;
 
     std::string operand_str() const noexcept override;
+
+
 };
 
 class Equal : public BinaryOperation
@@ -96,6 +106,8 @@ public:
     int eval() noexcept override;
 
     std::string operand_str() const noexcept override;
+
+
 
 };
 
@@ -108,6 +120,8 @@ public:
 
     std::string operand_str() const noexcept override;
 
+
+
 };
 
 class AndOperator : public BinaryOperation
@@ -119,6 +133,8 @@ public:
 
     std::string operand_str() const noexcept override;
 
+
+
 };
 
 class OrOperator : public BinaryOperation
@@ -129,6 +145,7 @@ public:
     int eval() noexcept override;
 
     std::string operand_str() const noexcept override;
+
 
 };
 
@@ -142,6 +159,8 @@ public:
     int eval() noexcept override;
 
     std::string to_string() const noexcept override;
+
+    void translate(std::ostream&) const noexcept override;
 
 private:
     std::string command;
@@ -158,10 +177,30 @@ public:
     
     std::string to_string() const noexcept override;
 
+    void translate(std::ostream&) const noexcept override;
+
 private:
     Expression* expresion;
     std::vector<Expression*> sentencia;
 };
+
+class If : public Expression {
+public:
+    If(Expression* e, std::vector<Expression*> s) noexcept;
+    
+    void destroy() noexcept override;
+
+    int eval() noexcept override;
+    
+    std::string to_string() const noexcept override;
+
+    void translate(std::ostream&) const noexcept override;
+
+private:
+    Expression* expresion;
+    std::vector<Expression*> sentencia;
+};
+
 
 
 

@@ -143,6 +143,10 @@ std::string Command::to_string() const noexcept
     return command;
 }
 
+void Command::translate(std::ostream& out) const noexcept
+{
+    out<<command << "\n";
+}
 
 While::While(Expression* e, std::vector<Expression*> s) noexcept
     : expresion{e}, sentencia{std::move(s)} {}
@@ -157,24 +161,75 @@ int While::eval() noexcept
     {
         for (Expression* expr : sentencia)
         {
-          //  printf(" %d  ", expr->eval());
-            //std::cout<<expr->to_string()<<"\n";
             
-        //std::cout<<expr->to_string() + " "; 
-       }
-       printf("\n");
+            std::cout<<expr->to_string()<<"\n";
+            
+        }
     }
     
     return 0;
 }
 
-std::string While::to_string() const noexcept
+void While::translate(std::ostream& out) const noexcept
 {
-    return "WHILE";
+
+    size_t tam = expresion->eval();
+    
+    for (size_t i = 0; i < tam; i++)
+    {
+        for (Expression* expr : sentencia)
+        {
+            
+            expr->translate(out);
+            
+        }
+    }    
 }
 
+std::string While::to_string() const noexcept
+{
+    std::string cadena = "";
+    for (Expression* expr : sentencia)
+        {
+            
+           cadena += expr->to_string();
+            
+        }
+    return cadena;
+}
 
+If::If(Expression* e, std::vector<Expression*> s) noexcept
+    : expresion{e}, sentencia{std::move(s)} {}
 
+void If::destroy() noexcept {}
+
+int If::eval() noexcept
+{
+    return 0;
+}
+
+void If::translate(std::ostream& out) const noexcept
+{
+    if (expresion->eval())
+    { 
+        for (Expression* expr : sentencia)
+        {       
+            expr->translate(out);        
+        }
+    }
+}
+
+std::string If::to_string() const noexcept
+{
+    std::string cadena = "";
+    for (Expression* expr : sentencia)
+        {
+            
+           cadena += expr->to_string();
+            
+        }
+    return cadena;
+}
 
 
 

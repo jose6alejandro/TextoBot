@@ -13,6 +13,7 @@ Expression* parser_result{nullptr};
 
 void eval_body(std::vector<Expression*> body_vector);
 std::vector<Expression*> body_vector;
+std::vector<std::vector<Expression*>> scope;
 %}
 
 %token TOKEN_ENTERO
@@ -43,16 +44,16 @@ std::vector<Expression*> body_vector;
 %token TOKEN_DISTINTO_DE
 %% 
 
-programa : body                                         { parser_result = $1; };
+programa : body                                         {eval_body(scope.back());}
 
-body:   sentencia                                     { body_vector.push_back($1);};
-        | body sentencia                              { body_vector.push_back($2);         
-                                                            //eval_body(body_vector);
-                                                        };                       
+body:                                                   {scope.push_back(std::vector<Expression*>());} 
+        | body sentencia                                {scope.back().push_back($2);}                       
         ;
 
-sentencia:comando                                       
-        | bucle                                         
+
+sentencia: comando                                       
+        | bucle 
+        | condicional                                    
 	    ;
 
 expresion : factor TOKEN_SUMA factor 			        { $$ = new Addition($1, $3); } 
@@ -88,9 +89,15 @@ comando : TOKEN_AVANZAR                                 { $$ = new Command("AVAN
         ;
 
 bucle : TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_REPETIR {
-      
-            $$ = new While($2, body_vector);
-            //body_vector.clear();     
+
+            $$ = new While($2, scope.back());
+            scope.pop_back();
+        } 
+        ; 
+condicional : TOKEN_SI expresion  TOKEN_DOBLEPUNTO body TOKEN_FIN_SI{
+ 
+            $$ = new If($2, scope.back());
+            scope.pop_back();
         } 
         ; 
 
@@ -159,7 +166,7 @@ void eval_body(std::vector<Expression*> body_vector)
 {
     for (Expression* expr : body_vector)
     {
-        std::cout<<expr->to_string()<<"\n";
+        expr->translate(std::cout);
         
     }
 
