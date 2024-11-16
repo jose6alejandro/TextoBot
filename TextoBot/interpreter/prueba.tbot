@@ -2,7 +2,7 @@ cantidad = 3
 
 AVANZAR
 
-REPETIR carlo:
+REPETIR cantidad:
     AVANZAR
     GIRAR_DER
 FIN_REPETIR
