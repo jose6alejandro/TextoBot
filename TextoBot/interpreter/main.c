@@ -32,10 +32,10 @@ int main(int argc, char* argv[])
 
     if (result == 0)
     {
-        //printf("%s = %d\n", parser_result->to_string().c_str(), parser_result->eval());
-        //printf("%s \n", parser_result->to_string().c_str());
-       // parser_result->eval();
-       // parser_result->destroy();
+        // printf("%s = %d\n", parser_result->to_string().c_str(), parser_result->eval());
+        // printf("%s \n", parser_result->to_string().c_str());
+        // parser_result->eval();
+        // parser_result->destroy();
     }
     else
     {

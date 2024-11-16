@@ -1,5 +1,9 @@
 %{
+
+#include "symbol_table.h"    
 #include "token.h"
+
+extern YYSTYPE yylval;
 
 int contar_linea = 1;
 
@@ -40,7 +44,12 @@ IDENTIFICADOR 	(_|{LETRA})({DIGITO}|{LETRA}|_)*
 "FIN_SI"			{ return TOKEN_FIN_SI; }
 "PROCEDIMIENTO"		{ return TOKEN_PROCEDIMIENTO; }
 "FIN_PROCEDIMIENTO"	{ return TOKEN_FIN_PROCEDIMIENTO; }
-{IDENTIFICADOR} 	{ return TOKEN_IDENTIFICADOR; }
+{IDENTIFICADOR} 	{
+                       auto p = id_table.add_id(yytext);
+                       yylval.var_id = p.first; 
+                       
+                        return TOKEN_IDENTIFICADOR;
+                    }
 . 		 	 		{ printf("Unexpected token in line %d\n", contar_linea); }
 %%
 

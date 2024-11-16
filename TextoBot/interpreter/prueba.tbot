@@ -1,12 +1,8 @@
+cantidad = 3
+
 AVANZAR
 
-REPETIR 1:
+REPETIR carlo:
     AVANZAR
-    REPETIR 2:
-        SI 0:
-            GIRAR_IZQ
-            GIRAR_IZQ
-            GIRAR_IZQ
-        FIN_SI
-    FIN_REPETIR
+    GIRAR_DER
 FIN_REPETIR

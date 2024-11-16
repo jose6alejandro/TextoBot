@@ -3,7 +3,11 @@
 #include <ast.hpp>
 #include <vector>
 #include <iostream>
-#define YYSTYPE Expression*
+#include "symbol_table.h"
+
+#include <assert.h>
+
+//#define YYSTYPE Expression*
 
 extern int yylex();
 extern char* yytext;
@@ -14,7 +18,20 @@ Expression* parser_result{nullptr};
 void eval_body(std::vector<Expression*> body_vector);
 std::vector<Expression*> body_vector;
 std::vector<std::vector<Expression*>> scope;
+
+int linea = 0;
+
+IdTable id_table;
+SymbolTable var_table;
+SymbolTable prop_table;
+
 %}
+
+%union
+{
+    int var_id;
+    Expression* prop;
+};
 
 %token TOKEN_ENTERO
 %token TOKEN_ASIGNAR
@@ -38,23 +55,39 @@ std::vector<std::vector<Expression*>> scope;
 %token TOKEN_FIN_SI
 %token TOKEN_PROCEDIMIENTO
 %token TOKEN_FIN_PROCEDIMIENTO
-%token TOKEN_IDENTIFICADOR
+%token <var_id> TOKEN_IDENTIFICADOR
 %token TOKEN_IZQ_PAREN
 %token TOKEN_DER_PAREN
 %token TOKEN_DISTINTO_DE
+
+%type <prop> body sentencia expresion factor proposicion comparador comando bucle condicional asignacion identificador
 %% 
 
-programa : body                                         {eval_body(scope.back());}
+programa : body                                         {/*prop_table.print();*/ eval_body(scope.back());}
 
-body:                                                   {scope.push_back(std::vector<Expression*>());} 
-        | body sentencia                                {scope.back().push_back($2);}                       
+body:                                                   {linea++; scope.push_back(std::vector<Expression*>());} 
+        | body sentencia                                {linea++; scope.back().push_back($2);}                       
         ;
 
 
 sentencia: comando                                       
         | bucle 
-        | condicional                                    
+        | condicional   
+        | asignacion
+        //procedimiento                                 
 	    ;
+
+asignacion: TOKEN_IDENTIFICADOR TOKEN_ASIGNAR expresion
+            {
+                 
+                auto id_val = id_table.search($1);
+                
+                if (id_val != nullptr && prop_table.search(*id_val) == nullptr)
+                {
+                    $$ = prop_table.add_var(*id_val, $3);
+                }
+                
+            };
 
 expresion : factor TOKEN_SUMA factor 			        { $$ = new Addition($1, $3); } 
         | factor TOKEN_RESTA factor 			        { $$ = new Subtraction($1, $3); }
@@ -66,7 +99,7 @@ expresion : factor TOKEN_SUMA factor 			        { $$ = new Addition($1, $3); }
 
 factor : TOKEN_ENTERO 					                { $$ = new Value(atoi(yytext)); }
       |  TOKEN_IZQ_PAREN expresion TOKEN_DER_PAREN	    { $$ = $2; }
-      //| TOKEN_IDENTIFICADOR
+      |  identificador
       ;
 
 proposicion : comparador TOKEN_CONJUNCION comparador    { $$ = new AndOperator($1, $3); } 
@@ -86,7 +119,33 @@ comando : TOKEN_AVANZAR                                 { $$ = new Command("AVAN
         | TOKEN_GIRAR_DER                               { $$ = new Command("GIRAR_DER"); }
         | TOKEN_ENCENDER_LED                            { $$ = new Command("ENCENDER_LED"); }       
         | TOKEN_APAGAR_LED                              { $$ = new Command("APAGAR_LED"); } 
+        | identificador                                            
         ;
+
+identificador: TOKEN_IDENTIFICADOR                                  
+        {
+            
+            auto id_val = id_table.search($1);
+            
+            if (id_val != nullptr)
+            {
+                auto p = prop_table.search(*id_val);
+                
+                if (p != nullptr)
+                {
+                    
+                    $$ = p;
+                }    
+                else
+                {
+                   // $$ = new Command(""); 
+                   $$ = prop_table.add_var(*id_val, new Value(0));
+                }          
+            
+            }    
+
+        }
+      ;
 
 bucle : TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_REPETIR {
 
@@ -94,6 +153,7 @@ bucle : TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_REPETIR {
             scope.pop_back();
         } 
         ; 
+
 condicional : TOKEN_SI expresion  TOKEN_DOBLEPUNTO body TOKEN_FIN_SI{
  
             $$ = new If($2, scope.back());
@@ -101,73 +161,25 @@ condicional : TOKEN_SI expresion  TOKEN_DOBLEPUNTO body TOKEN_FIN_SI{
         } 
         ; 
 
-/*sentencia : asignacion sentencia
-        | comando sentencia
-        | bucle sentencia
-        | condicional sentencia
-        | procedimiento sentencia
-        |
-        ;
+// procedimiento : TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_PROCEDIMIENTO
 
-asignacion: TOKEN_IDENTIFICADOR TOKEN_ASIGNAR expresion;
-
-factor : TOKEN_IDENTIFICADOR
-      | TOKEN_ENTERO
-      | TOKEN_IZQ_PAREN expresion TOKEN_DER_PAREN
-      ;
-
-expresion : factor operador_aritmetico factor
-         | proposicion
-         | comparador
-         ;
-
-operador_aritmetico : TOKEN_SUMA
-                   | TOKEN_RESTA
-                   | TOKEN_MULTIPLICACION
-                   | TOKEN_DIVISION
-                   ;
-
-proposicion : comparador TOKEN_CONJUNCION comparador
-            | comparador TOKEN_DISYUNCION comparador
-            | comparador TOKEN_CONJUNCION proposicion
-            | comparador TOKEN_DISYUNCION proposicion
-            ;
-
-comparador: factor 
-        | factor TOKEN_IGUALDAD factor
-        | factor TOKEN_DISTINTO_DE factor
-        ;        
-
-comando : TOKEN_AVANZAR
-        | TOKEN_RETROCEDER
-        | TOKEN_GIRAR_IZQ
-        | TOKEN_GIRAR_DER
-        | TOKEN_ENCENDER_LED
-        | TOKEN_APAGAR_LED
-        | TOKEN_IDENTIFICADOR
-        ;
-
-bucle : TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_REPETIR;
-
-condicional : TOKEN_SI expresion  TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_SI;
-
-procedimiento : TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_PROCEDIMIENTO
-
-*/
 %%
 
 int yyerror(const char* s)
 {
-    printf("Parse error: %s\n", s);
+    printf("Linea: %d, %s \n", linea, s);
     return 1;
 }
 
+
 void eval_body(std::vector<Expression*> body_vector)
 {
+    
     for (Expression* expr : body_vector)
     {
         expr->translate(std::cout);
         
     }
 
+    
 }
