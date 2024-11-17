@@ -19,10 +19,12 @@ void eval_body(std::vector<Expression*> body_vector);
 std::vector<Expression*> body_vector;
 std::vector<std::vector<Expression*>> scope;
 
+std::vector<std::vector<Expression*>> body_procedimiento_vector;
+
 int linea = 0;
 
 IdTable id_table;
-SymbolTable var_table;
+SymbolTable_Subprogram subprogram_table;
 SymbolTable prop_table;
 
 %}
@@ -60,21 +62,25 @@ SymbolTable prop_table;
 %token TOKEN_DER_PAREN
 %token TOKEN_DISTINTO_DE
 
-%type <prop> body sentencia expresion factor proposicion comparador comando bucle condicional asignacion identificador
+
+%type <prop> body sentencia expresion factor proposicion comparador comando bucle condicional asignacion identificador procedimiento id_procedimiento
 %% 
 
-programa : body                                         {/*prop_table.print();*/ eval_body(scope.back());}
+programa : body                                        {/*prop_table.print();*/ eval_body(scope.back()); }
 
 body:                                                   {linea++; scope.push_back(std::vector<Expression*>());} 
         | body sentencia                                {linea++; scope.back().push_back($2);}                       
         ;
 
+body_procedimiento:                                   {linea++; body_procedimiento_vector.push_back(std::vector<Expression*>());} 
+                    | body_procedimiento sentencia    {linea++; body_procedimiento_vector.back().push_back($2);}  
+                    ;
 
 sentencia: comando                                       
         | bucle 
         | condicional   
         | asignacion
-        //procedimiento                                 
+        | procedimiento                              
 	    ;
 
 asignacion: TOKEN_IDENTIFICADOR TOKEN_ASIGNAR expresion
@@ -119,8 +125,10 @@ comando : TOKEN_AVANZAR                                 { $$ = new Command("AVAN
         | TOKEN_GIRAR_DER                               { $$ = new Command("GIRAR_DER"); }
         | TOKEN_ENCENDER_LED                            { $$ = new Command("ENCENDER_LED"); }       
         | TOKEN_APAGAR_LED                              { $$ = new Command("APAGAR_LED"); } 
-        | identificador                                            
+        | identificador  
+        | id_procedimiento                                          
         ;
+
 
 identificador: TOKEN_IDENTIFICADOR                                  
         {
@@ -138,7 +146,6 @@ identificador: TOKEN_IDENTIFICADOR
                 }    
                 else
                 {
-                   // $$ = new Command(""); 
                    $$ = prop_table.add_var(*id_val, new Value(0));
                 }          
             
@@ -146,6 +153,33 @@ identificador: TOKEN_IDENTIFICADOR
 
         }
       ;
+id_procedimiento: TOKEN_IDENTIFICADOR TOKEN_IZQ_PAREN TOKEN_DER_PAREN
+{
+    auto id_val = id_table.search($1);
+    
+    if (id_val != nullptr)
+    {
+        auto p = subprogram_table.search(*id_val);
+        
+        if (!p.empty())
+        {
+            auto vector = subprogram_table.getExpression(*id_val);
+            
+            scope.back().insert(scope.back().end(), vector.begin(), vector.end());
+            
+        }    
+        else
+        {
+            yyerror("Error: procedimiento no declarado");
+            YYERROR;
+            
+        }   
+        $$ = new Command(""); 
+    }          
+
+};
+
+
 
 bucle : TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_REPETIR {
 
@@ -161,7 +195,22 @@ condicional : TOKEN_SI expresion  TOKEN_DOBLEPUNTO body TOKEN_FIN_SI{
         } 
         ; 
 
-// procedimiento : TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO sentencia TOKEN_FIN_PROCEDIMIENTO
+procedimiento : TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO body_procedimiento TOKEN_FIN_PROCEDIMIENTO
+            {
+             
+                auto id_val = id_table.search($2);
+
+                if (id_val != nullptr && subprogram_table.search(*id_val).empty())
+                {
+                    
+                    subprogram_table.add_var(*id_val, body_procedimiento_vector.back());
+                  
+                   $$ = new Command("");
+
+                }
+    
+            }
+        ;
 
 %%
 
@@ -177,7 +226,8 @@ void eval_body(std::vector<Expression*> body_vector)
     
     for (Expression* expr : body_vector)
     {
-        expr->translate(std::cout);
+        if (expr->to_string() != "")
+            expr->translate(std::cout);
         
     }
 

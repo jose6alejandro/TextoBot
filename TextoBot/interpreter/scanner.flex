@@ -16,6 +16,7 @@ ENTERO    		(0|[1-9]{DIGITO}*)
 LETRA     		[A-Za-z]
 IDENTIFICADOR 	(_|{LETRA})({DIGITO}|{LETRA}|_)*
 
+
 %%
 {ESPACIO}    		{}
 {NUEVALINEA}		{ contar_linea++; }
@@ -50,6 +51,7 @@ IDENTIFICADOR 	(_|{LETRA})({DIGITO}|{LETRA}|_)*
                        
                         return TOKEN_IDENTIFICADOR;
                     }
+                    
 . 		 	 		{ printf("Unexpected token in line %d\n", contar_linea); }
 %%
 
