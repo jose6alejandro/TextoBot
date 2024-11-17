@@ -1,0 +1,807 @@
+Gramática
+
+    0 $accept: programa $end
+
+    1 programa: body
+
+    2 body: %empty
+    3     | body sentencia
+
+    4 body_procedimiento: %empty
+    5                   | body_procedimiento sentencia
+
+    6 sentencia: comando
+    7          | bucle
+    8          | condicional
+    9          | asignacion
+   10          | procedimiento
+
+   11 asignacion: TOKEN_IDENTIFICADOR TOKEN_ASIGNAR expresion
+
+   12 expresion: factor TOKEN_SUMA factor
+   13          | factor TOKEN_RESTA factor
+   14          | factor TOKEN_MULTIPLICACION factor
+   15          | factor TOKEN_DIVISION factor
+   16          | proposicion
+   17          | comparador
+
+   18 factor: TOKEN_ENTERO
+   19       | TOKEN_IZQ_PAREN expresion TOKEN_DER_PAREN
+   20       | identificador
+
+   21 proposicion: comparador TOKEN_CONJUNCION comparador
+   22            | comparador TOKEN_DISYUNCION comparador
+   23            | comparador TOKEN_CONJUNCION proposicion
+   24            | comparador TOKEN_DISYUNCION proposicion
+
+   25 comparador: factor
+   26           | factor TOKEN_IGUALDAD factor
+   27           | factor TOKEN_DISTINTO_DE factor
+
+   28 comando: TOKEN_AVANZAR
+   29        | TOKEN_RETROCEDER
+   30        | TOKEN_GIRAR_IZQ
+   31        | TOKEN_GIRAR_DER
+   32        | TOKEN_ENCENDER_LED
+   33        | TOKEN_APAGAR_LED
+   34        | identificador
+   35        | id_procedimiento
+
+   36 identificador: TOKEN_IDENTIFICADOR
+
+   37 id_procedimiento: TOKEN_IDENTIFICADOR TOKEN_IZQ_PAREN TOKEN_DER_PAREN
+
+   38 bucle: TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_REPETIR
+
+   39 condicional: TOKEN_SI expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_SI
+
+   40 procedimiento: TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO body_procedimiento TOKEN_FIN_PROCEDIMIENTO
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+error (256)
+TOKEN_ENTERO (258) 18
+TOKEN_ASIGNAR (259) 11
+TOKEN_DOBLEPUNTO (260) 38 39 40
+TOKEN_SUMA (261) 12
+TOKEN_RESTA (262) 13
+TOKEN_MULTIPLICACION (263) 14
+TOKEN_DIVISION (264) 15
+TOKEN_IGUALDAD (265) 26
+TOKEN_CONJUNCION (266) 21 23
+TOKEN_DISYUNCION (267) 22 24
+TOKEN_AVANZAR (268) 28
+TOKEN_RETROCEDER (269) 29
+TOKEN_GIRAR_IZQ (270) 30
+TOKEN_GIRAR_DER (271) 31
+TOKEN_ENCENDER_LED (272) 32
+TOKEN_APAGAR_LED (273) 33
+TOKEN_REPETIR (274) 38
+TOKEN_FIN_REPETIR (275) 38
+TOKEN_SI (276) 39
+TOKEN_FIN_SI (277) 39
+TOKEN_PROCEDIMIENTO (278) 40
+TOKEN_FIN_PROCEDIMIENTO (279) 40
+TOKEN_IDENTIFICADOR (280) 11 36 37 40
+TOKEN_IZQ_PAREN (281) 19 37
+TOKEN_DER_PAREN (282) 19 37
+TOKEN_DISTINTO_DE (283) 27
+
+
+No terminales con las reglas donde aparecen
+
+$accept (29)
+    en la izquierda: 0
+programa (30)
+    en la izquierda: 1, en la derecha: 0
+body (31)
+    en la izquierda: 2 3, en la derecha: 1 3 38 39
+body_procedimiento (32)
+    en la izquierda: 4 5, en la derecha: 5 40
+sentencia (33)
+    en la izquierda: 6 7 8 9 10, en la derecha: 3 5
+asignacion (34)
+    en la izquierda: 11, en la derecha: 9
+expresion (35)
+    en la izquierda: 12 13 14 15 16 17, en la derecha: 11 19 38 39
+factor (36)
+    en la izquierda: 18 19 20, en la derecha: 12 13 14 15 25 26 27
+proposicion (37)
+    en la izquierda: 21 22 23 24, en la derecha: 16 23 24
+comparador (38)
+    en la izquierda: 25 26 27, en la derecha: 17 21 22 23 24
+comando (39)
+    en la izquierda: 28 29 30 31 32 33 34 35, en la derecha: 6
+identificador (40)
+    en la izquierda: 36, en la derecha: 20 34
+id_procedimiento (41)
+    en la izquierda: 37, en la derecha: 35
+bucle (42)
+    en la izquierda: 38, en la derecha: 7
+condicional (43)
+    en la izquierda: 39, en la derecha: 8
+procedimiento (44)
+    en la izquierda: 40, en la derecha: 10
+
+
+Estado 0
+
+    0 $accept: . programa $end
+
+    $default  reduce usando la regla 2 (body)
+
+    programa  ir al estado 1
+    body      ir al estado 2
+
+
+Estado 1
+
+    0 $accept: programa . $end
+
+    $end  desplazar e ir al estado 3
+
+
+Estado 2
+
+    1 programa: body .
+    3 body: body . sentencia
+
+    TOKEN_AVANZAR        desplazar e ir al estado 4
+    TOKEN_RETROCEDER     desplazar e ir al estado 5
+    TOKEN_GIRAR_IZQ      desplazar e ir al estado 6
+    TOKEN_GIRAR_DER      desplazar e ir al estado 7
+    TOKEN_ENCENDER_LED   desplazar e ir al estado 8
+    TOKEN_APAGAR_LED     desplazar e ir al estado 9
+    TOKEN_REPETIR        desplazar e ir al estado 10
+    TOKEN_SI             desplazar e ir al estado 11
+    TOKEN_PROCEDIMIENTO  desplazar e ir al estado 12
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 13
+
+    $default  reduce usando la regla 1 (programa)
+
+    sentencia         ir al estado 14
+    asignacion        ir al estado 15
+    comando           ir al estado 16
+    identificador     ir al estado 17
+    id_procedimiento  ir al estado 18
+    bucle             ir al estado 19
+    condicional       ir al estado 20
+    procedimiento     ir al estado 21
+
+
+Estado 3
+
+    0 $accept: programa $end .
+
+    $default  aceptar
+
+
+Estado 4
+
+   28 comando: TOKEN_AVANZAR .
+
+    $default  reduce usando la regla 28 (comando)
+
+
+Estado 5
+
+   29 comando: TOKEN_RETROCEDER .
+
+    $default  reduce usando la regla 29 (comando)
+
+
+Estado 6
+
+   30 comando: TOKEN_GIRAR_IZQ .
+
+    $default  reduce usando la regla 30 (comando)
+
+
+Estado 7
+
+   31 comando: TOKEN_GIRAR_DER .
+
+    $default  reduce usando la regla 31 (comando)
+
+
+Estado 8
+
+   32 comando: TOKEN_ENCENDER_LED .
+
+    $default  reduce usando la regla 32 (comando)
+
+
+Estado 9
+
+   33 comando: TOKEN_APAGAR_LED .
+
+    $default  reduce usando la regla 33 (comando)
+
+
+Estado 10
+
+   38 bucle: TOKEN_REPETIR . expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_REPETIR
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    expresion      ir al estado 25
+    factor         ir al estado 26
+    proposicion    ir al estado 27
+    comparador     ir al estado 28
+    identificador  ir al estado 29
+
+
+Estado 11
+
+   39 condicional: TOKEN_SI . expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_SI
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    expresion      ir al estado 30
+    factor         ir al estado 26
+    proposicion    ir al estado 27
+    comparador     ir al estado 28
+    identificador  ir al estado 29
+
+
+Estado 12
+
+   40 procedimiento: TOKEN_PROCEDIMIENTO . TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO body_procedimiento TOKEN_FIN_PROCEDIMIENTO
+
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 31
+
+
+Estado 13
+
+   11 asignacion: TOKEN_IDENTIFICADOR . TOKEN_ASIGNAR expresion
+   36 identificador: TOKEN_IDENTIFICADOR .
+   37 id_procedimiento: TOKEN_IDENTIFICADOR . TOKEN_IZQ_PAREN TOKEN_DER_PAREN
+
+    TOKEN_ASIGNAR    desplazar e ir al estado 32
+    TOKEN_IZQ_PAREN  desplazar e ir al estado 33
+
+    $default  reduce usando la regla 36 (identificador)
+
+
+Estado 14
+
+    3 body: body sentencia .
+
+    $default  reduce usando la regla 3 (body)
+
+
+Estado 15
+
+    9 sentencia: asignacion .
+
+    $default  reduce usando la regla 9 (sentencia)
+
+
+Estado 16
+
+    6 sentencia: comando .
+
+    $default  reduce usando la regla 6 (sentencia)
+
+
+Estado 17
+
+   34 comando: identificador .
+
+    $default  reduce usando la regla 34 (comando)
+
+
+Estado 18
+
+   35 comando: id_procedimiento .
+
+    $default  reduce usando la regla 35 (comando)
+
+
+Estado 19
+
+    7 sentencia: bucle .
+
+    $default  reduce usando la regla 7 (sentencia)
+
+
+Estado 20
+
+    8 sentencia: condicional .
+
+    $default  reduce usando la regla 8 (sentencia)
+
+
+Estado 21
+
+   10 sentencia: procedimiento .
+
+    $default  reduce usando la regla 10 (sentencia)
+
+
+Estado 22
+
+   18 factor: TOKEN_ENTERO .
+
+    $default  reduce usando la regla 18 (factor)
+
+
+Estado 23
+
+   36 identificador: TOKEN_IDENTIFICADOR .
+
+    $default  reduce usando la regla 36 (identificador)
+
+
+Estado 24
+
+   19 factor: TOKEN_IZQ_PAREN . expresion TOKEN_DER_PAREN
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    expresion      ir al estado 34
+    factor         ir al estado 26
+    proposicion    ir al estado 27
+    comparador     ir al estado 28
+    identificador  ir al estado 29
+
+
+Estado 25
+
+   38 bucle: TOKEN_REPETIR expresion . TOKEN_DOBLEPUNTO body TOKEN_FIN_REPETIR
+
+    TOKEN_DOBLEPUNTO  desplazar e ir al estado 35
+
+
+Estado 26
+
+   12 expresion: factor . TOKEN_SUMA factor
+   13          | factor . TOKEN_RESTA factor
+   14          | factor . TOKEN_MULTIPLICACION factor
+   15          | factor . TOKEN_DIVISION factor
+   25 comparador: factor .
+   26           | factor . TOKEN_IGUALDAD factor
+   27           | factor . TOKEN_DISTINTO_DE factor
+
+    TOKEN_SUMA            desplazar e ir al estado 36
+    TOKEN_RESTA           desplazar e ir al estado 37
+    TOKEN_MULTIPLICACION  desplazar e ir al estado 38
+    TOKEN_DIVISION        desplazar e ir al estado 39
+    TOKEN_IGUALDAD        desplazar e ir al estado 40
+    TOKEN_DISTINTO_DE     desplazar e ir al estado 41
+
+    $default  reduce usando la regla 25 (comparador)
+
+
+Estado 27
+
+   16 expresion: proposicion .
+
+    $default  reduce usando la regla 16 (expresion)
+
+
+Estado 28
+
+   17 expresion: comparador .
+   21 proposicion: comparador . TOKEN_CONJUNCION comparador
+   22            | comparador . TOKEN_DISYUNCION comparador
+   23            | comparador . TOKEN_CONJUNCION proposicion
+   24            | comparador . TOKEN_DISYUNCION proposicion
+
+    TOKEN_CONJUNCION  desplazar e ir al estado 42
+    TOKEN_DISYUNCION  desplazar e ir al estado 43
+
+    $default  reduce usando la regla 17 (expresion)
+
+
+Estado 29
+
+   20 factor: identificador .
+
+    $default  reduce usando la regla 20 (factor)
+
+
+Estado 30
+
+   39 condicional: TOKEN_SI expresion . TOKEN_DOBLEPUNTO body TOKEN_FIN_SI
+
+    TOKEN_DOBLEPUNTO  desplazar e ir al estado 44
+
+
+Estado 31
+
+   40 procedimiento: TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR . TOKEN_DOBLEPUNTO body_procedimiento TOKEN_FIN_PROCEDIMIENTO
+
+    TOKEN_DOBLEPUNTO  desplazar e ir al estado 45
+
+
+Estado 32
+
+   11 asignacion: TOKEN_IDENTIFICADOR TOKEN_ASIGNAR . expresion
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    expresion      ir al estado 46
+    factor         ir al estado 26
+    proposicion    ir al estado 27
+    comparador     ir al estado 28
+    identificador  ir al estado 29
+
+
+Estado 33
+
+   37 id_procedimiento: TOKEN_IDENTIFICADOR TOKEN_IZQ_PAREN . TOKEN_DER_PAREN
+
+    TOKEN_DER_PAREN  desplazar e ir al estado 47
+
+
+Estado 34
+
+   19 factor: TOKEN_IZQ_PAREN expresion . TOKEN_DER_PAREN
+
+    TOKEN_DER_PAREN  desplazar e ir al estado 48
+
+
+Estado 35
+
+   38 bucle: TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO . body TOKEN_FIN_REPETIR
+
+    $default  reduce usando la regla 2 (body)
+
+    body  ir al estado 49
+
+
+Estado 36
+
+   12 expresion: factor TOKEN_SUMA . factor
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    factor         ir al estado 50
+    identificador  ir al estado 29
+
+
+Estado 37
+
+   13 expresion: factor TOKEN_RESTA . factor
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    factor         ir al estado 51
+    identificador  ir al estado 29
+
+
+Estado 38
+
+   14 expresion: factor TOKEN_MULTIPLICACION . factor
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    factor         ir al estado 52
+    identificador  ir al estado 29
+
+
+Estado 39
+
+   15 expresion: factor TOKEN_DIVISION . factor
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    factor         ir al estado 53
+    identificador  ir al estado 29
+
+
+Estado 40
+
+   26 comparador: factor TOKEN_IGUALDAD . factor
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    factor         ir al estado 54
+    identificador  ir al estado 29
+
+
+Estado 41
+
+   27 comparador: factor TOKEN_DISTINTO_DE . factor
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    factor         ir al estado 55
+    identificador  ir al estado 29
+
+
+Estado 42
+
+   21 proposicion: comparador TOKEN_CONJUNCION . comparador
+   23            | comparador TOKEN_CONJUNCION . proposicion
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    factor         ir al estado 56
+    proposicion    ir al estado 57
+    comparador     ir al estado 58
+    identificador  ir al estado 29
+
+
+Estado 43
+
+   22 proposicion: comparador TOKEN_DISYUNCION . comparador
+   24            | comparador TOKEN_DISYUNCION . proposicion
+
+    TOKEN_ENTERO         desplazar e ir al estado 22
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 23
+    TOKEN_IZQ_PAREN      desplazar e ir al estado 24
+
+    factor         ir al estado 56
+    proposicion    ir al estado 59
+    comparador     ir al estado 60
+    identificador  ir al estado 29
+
+
+Estado 44
+
+   39 condicional: TOKEN_SI expresion TOKEN_DOBLEPUNTO . body TOKEN_FIN_SI
+
+    $default  reduce usando la regla 2 (body)
+
+    body  ir al estado 61
+
+
+Estado 45
+
+   40 procedimiento: TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO . body_procedimiento TOKEN_FIN_PROCEDIMIENTO
+
+    $default  reduce usando la regla 4 (body_procedimiento)
+
+    body_procedimiento  ir al estado 62
+
+
+Estado 46
+
+   11 asignacion: TOKEN_IDENTIFICADOR TOKEN_ASIGNAR expresion .
+
+    $default  reduce usando la regla 11 (asignacion)
+
+
+Estado 47
+
+   37 id_procedimiento: TOKEN_IDENTIFICADOR TOKEN_IZQ_PAREN TOKEN_DER_PAREN .
+
+    $default  reduce usando la regla 37 (id_procedimiento)
+
+
+Estado 48
+
+   19 factor: TOKEN_IZQ_PAREN expresion TOKEN_DER_PAREN .
+
+    $default  reduce usando la regla 19 (factor)
+
+
+Estado 49
+
+    3 body: body . sentencia
+   38 bucle: TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO body . TOKEN_FIN_REPETIR
+
+    TOKEN_AVANZAR        desplazar e ir al estado 4
+    TOKEN_RETROCEDER     desplazar e ir al estado 5
+    TOKEN_GIRAR_IZQ      desplazar e ir al estado 6
+    TOKEN_GIRAR_DER      desplazar e ir al estado 7
+    TOKEN_ENCENDER_LED   desplazar e ir al estado 8
+    TOKEN_APAGAR_LED     desplazar e ir al estado 9
+    TOKEN_REPETIR        desplazar e ir al estado 10
+    TOKEN_FIN_REPETIR    desplazar e ir al estado 63
+    TOKEN_SI             desplazar e ir al estado 11
+    TOKEN_PROCEDIMIENTO  desplazar e ir al estado 12
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 13
+
+    sentencia         ir al estado 14
+    asignacion        ir al estado 15
+    comando           ir al estado 16
+    identificador     ir al estado 17
+    id_procedimiento  ir al estado 18
+    bucle             ir al estado 19
+    condicional       ir al estado 20
+    procedimiento     ir al estado 21
+
+
+Estado 50
+
+   12 expresion: factor TOKEN_SUMA factor .
+
+    $default  reduce usando la regla 12 (expresion)
+
+
+Estado 51
+
+   13 expresion: factor TOKEN_RESTA factor .
+
+    $default  reduce usando la regla 13 (expresion)
+
+
+Estado 52
+
+   14 expresion: factor TOKEN_MULTIPLICACION factor .
+
+    $default  reduce usando la regla 14 (expresion)
+
+
+Estado 53
+
+   15 expresion: factor TOKEN_DIVISION factor .
+
+    $default  reduce usando la regla 15 (expresion)
+
+
+Estado 54
+
+   26 comparador: factor TOKEN_IGUALDAD factor .
+
+    $default  reduce usando la regla 26 (comparador)
+
+
+Estado 55
+
+   27 comparador: factor TOKEN_DISTINTO_DE factor .
+
+    $default  reduce usando la regla 27 (comparador)
+
+
+Estado 56
+
+   25 comparador: factor .
+   26           | factor . TOKEN_IGUALDAD factor
+   27           | factor . TOKEN_DISTINTO_DE factor
+
+    TOKEN_IGUALDAD     desplazar e ir al estado 40
+    TOKEN_DISTINTO_DE  desplazar e ir al estado 41
+
+    $default  reduce usando la regla 25 (comparador)
+
+
+Estado 57
+
+   23 proposicion: comparador TOKEN_CONJUNCION proposicion .
+
+    $default  reduce usando la regla 23 (proposicion)
+
+
+Estado 58
+
+   21 proposicion: comparador . TOKEN_CONJUNCION comparador
+   21            | comparador TOKEN_CONJUNCION comparador .
+   22            | comparador . TOKEN_DISYUNCION comparador
+   23            | comparador . TOKEN_CONJUNCION proposicion
+   24            | comparador . TOKEN_DISYUNCION proposicion
+
+    TOKEN_CONJUNCION  desplazar e ir al estado 42
+    TOKEN_DISYUNCION  desplazar e ir al estado 43
+
+    $default  reduce usando la regla 21 (proposicion)
+
+
+Estado 59
+
+   24 proposicion: comparador TOKEN_DISYUNCION proposicion .
+
+    $default  reduce usando la regla 24 (proposicion)
+
+
+Estado 60
+
+   21 proposicion: comparador . TOKEN_CONJUNCION comparador
+   22            | comparador . TOKEN_DISYUNCION comparador
+   22            | comparador TOKEN_DISYUNCION comparador .
+   23            | comparador . TOKEN_CONJUNCION proposicion
+   24            | comparador . TOKEN_DISYUNCION proposicion
+
+    TOKEN_CONJUNCION  desplazar e ir al estado 42
+    TOKEN_DISYUNCION  desplazar e ir al estado 43
+
+    $default  reduce usando la regla 22 (proposicion)
+
+
+Estado 61
+
+    3 body: body . sentencia
+   39 condicional: TOKEN_SI expresion TOKEN_DOBLEPUNTO body . TOKEN_FIN_SI
+
+    TOKEN_AVANZAR        desplazar e ir al estado 4
+    TOKEN_RETROCEDER     desplazar e ir al estado 5
+    TOKEN_GIRAR_IZQ      desplazar e ir al estado 6
+    TOKEN_GIRAR_DER      desplazar e ir al estado 7
+    TOKEN_ENCENDER_LED   desplazar e ir al estado 8
+    TOKEN_APAGAR_LED     desplazar e ir al estado 9
+    TOKEN_REPETIR        desplazar e ir al estado 10
+    TOKEN_SI             desplazar e ir al estado 11
+    TOKEN_FIN_SI         desplazar e ir al estado 64
+    TOKEN_PROCEDIMIENTO  desplazar e ir al estado 12
+    TOKEN_IDENTIFICADOR  desplazar e ir al estado 13
+
+    sentencia         ir al estado 14
+    asignacion        ir al estado 15
+    comando           ir al estado 16
+    identificador     ir al estado 17
+    id_procedimiento  ir al estado 18
+    bucle             ir al estado 19
+    condicional       ir al estado 20
+    procedimiento     ir al estado 21
+
+
+Estado 62
+
+    5 body_procedimiento: body_procedimiento . sentencia
+   40 procedimiento: TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO body_procedimiento . TOKEN_FIN_PROCEDIMIENTO
+
+    TOKEN_AVANZAR            desplazar e ir al estado 4
+    TOKEN_RETROCEDER         desplazar e ir al estado 5
+    TOKEN_GIRAR_IZQ          desplazar e ir al estado 6
+    TOKEN_GIRAR_DER          desplazar e ir al estado 7
+    TOKEN_ENCENDER_LED       desplazar e ir al estado 8
+    TOKEN_APAGAR_LED         desplazar e ir al estado 9
+    TOKEN_REPETIR            desplazar e ir al estado 10
+    TOKEN_SI                 desplazar e ir al estado 11
+    TOKEN_PROCEDIMIENTO      desplazar e ir al estado 12
+    TOKEN_FIN_PROCEDIMIENTO  desplazar e ir al estado 65
+    TOKEN_IDENTIFICADOR      desplazar e ir al estado 13
+
+    sentencia         ir al estado 66
+    asignacion        ir al estado 15
+    comando           ir al estado 16
+    identificador     ir al estado 17
+    id_procedimiento  ir al estado 18
+    bucle             ir al estado 19
+    condicional       ir al estado 20
+    procedimiento     ir al estado 21
+
+
+Estado 63
+
+   38 bucle: TOKEN_REPETIR expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_REPETIR .
+
+    $default  reduce usando la regla 38 (bucle)
+
+
+Estado 64
+
+   39 condicional: TOKEN_SI expresion TOKEN_DOBLEPUNTO body TOKEN_FIN_SI .
+
+    $default  reduce usando la regla 39 (condicional)
+
+
+Estado 65
+
+   40 procedimiento: TOKEN_PROCEDIMIENTO TOKEN_IDENTIFICADOR TOKEN_DOBLEPUNTO body_procedimiento TOKEN_FIN_PROCEDIMIENTO .
+
+    $default  reduce usando la regla 40 (procedimiento)
+
+
+Estado 66
+
+    5 body_procedimiento: body_procedimiento sentencia .
+
+    $default  reduce usando la regla 5 (body_procedimiento)

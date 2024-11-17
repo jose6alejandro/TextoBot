@@ -1,0 +1,19 @@
+GIRAR_DER
+
+PROCEDIMIENTO p1:
+rep = 2
+rep2 = 1
+REPETIR rep:
+    AVANZAR
+    GIRAR_DER
+    SI rep2 == 1:
+        GIRAR_IZQ
+    FIN_SI
+FIN_REPETIR    
+FIN_PROCEDIMIENTO
+
+
+p1()
+ENCENDER_LED
+
+
