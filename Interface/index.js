@@ -29,7 +29,6 @@ const GRID_SIZE = 100; // Tamaño de cada celda (en píxeles)
 const GRID_ROWS = stage.height() / GRID_SIZE;
 const GRID_COLS = stage.width() / GRID_SIZE;
 const gridSize = GRID_COLS;
-
 let playerPosition = { x: 0, y: 0 };
 let timetou;
 
@@ -45,28 +44,87 @@ function getRandomValueGrid() {
   return Math.floor(Math.random() * 6); // Genera un número entre 0 y 5
 }
 
-const ramdonX = getRandomValueGrid();
-const ramdonY = getRandomValueGrid();
+function getRandomNumber(min) {
+  // Asegurarnos de que el mínimo no sea mayor o igual a 6
+  if (min >= 5) {
+      console.error("El parámetro debe ser menor a 5");
+      return null;
+  }
 
-console.log({ramdonX, ramdonY})
+  // Generar un número aleatorio mayor a min y menor a 6
+  const max = 5; // Máximo valor posible es 5 porque queremos números menores a 6
+  const randomNumber = Math.floor(Math.random() * (max - min)) + min + 1;
+  return randomNumber;
+}
+
+const ramdonX = getRandomNumber(2);
+const ramdonY = getRandomNumber(3);
+const obstacleCamdonX = getRandomNumber(1);
+const obstacleCamdonY = getRandomNumber(1);
+const obstacleCamdonX1 = getRandomNumber(1);
+const obstacleCamdonY1 = getRandomNumber(1);
+const META_COLOR = "#6aa95f";
+const OBSTACLE_COLOR = "#b7d3e6";
+const x_history = { 0: 0 };
+const y_history = { 0: 0 };
+
+console.log('dssdf', x_history);
+console.log('y_history', y_history);
 
 // Agregar un rectángulo para representar al personaje
 let meta = new Konva.Image({
   x: (ramdonX * GRID_SIZE),  // Establece la posición inicial
   y: (ramdonY * GRID_SIZE),  // Establece la posición inicial
+  // x: 2 * GRID_SIZE,
+  // y: 0 * GRID_SIZE,
   width: GRID_SIZE, // Tamaño de la imagen
   height: GRID_SIZE, // Tamaño de la imagen
-  fill: "#6aa95f",
-  // obstaculos fill: "#b7d3e6",
+  fill: META_COLOR,
+  // obstaculos fill: "#",
   cornerRadius: 5,
   opacity: 0.7
 });
+
+Object.assign(x_history, { [ramdonX]: ramdonX });
+Object.assign(y_history, { [ramdonY]: ramdonY });
+
+let obstacle1 = new Konva.Image({
+  x: (typeof x_history[obstacleCamdonX] !== 'number' ? (obstacleCamdonX) : (getRandomNumber(1))) * GRID_SIZE,  // Establece la posición inicial
+  y: (typeof y_history[obstacleCamdonY] !== 'number' ? (obstacleCamdonY) : (getRandomNumber(1))) * GRID_SIZE,  // Establece la posición inicial 
+  // x: 2 * GRID_SIZE,
+  // y: 0 * GRID_SIZE,
+  width: GRID_SIZE, // Tamaño de la imagen
+  height: GRID_SIZE, // Tamaño de la imagen
+  fill: OBSTACLE_COLOR,
+  cornerRadius: 5,
+  opacity: 0.7
+});
+
+Object.assign(x_history, { [obstacleCamdonX]: obstacleCamdonX });
+Object.assign(y_history, { [obstacleCamdonY]: obstacleCamdonY });
+
+let obstacle2 = new Konva.Image({
+  x: (typeof x_history[obstacleCamdonX1] !== 'number' ? (obstacleCamdonX1) : (getRandomNumber(1))) * GRID_SIZE,  // Establece la posición inicial
+  y: (typeof y_history[obstacleCamdonY1] !== 'number' ? (obstacleCamdonY1) : (getRandomNumber(1))) * GRID_SIZE,  // Establece la posición inicial 
+  // x: 2 * GRID_SIZE,
+  // y: 0 * GRID_SIZE,
+  width: GRID_SIZE, // Tamaño de la imagen
+  height: GRID_SIZE, // Tamaño de la imagen
+  fill: OBSTACLE_COLOR,
+  cornerRadius: 5,
+  opacity: 0.7
+});
+
+Object.assign(x_history, { [obstacleCamdonX1]: obstacleCamdonX1 });
+Object.assign(y_history, { [obstacleCamdonY1]: obstacleCamdonY1 });
 
 player.offset({
   x: player.width() / 2, // 0 píxeles desde el borde izquierdo
   y: player.height() / 2, // 0 píxeles desde el borde superior
 });
 
+layer.add(obstacle1);
+layer.add(obstacle2);
 layer.add(meta);
 layer.add(player);
 
@@ -166,12 +224,32 @@ function move() {
 
 function moveForward(){
   move();
+  if(player.x() === (obstacle1.x() + 50) && player.y() ===( obstacle1.y() + 50)){
+    obstacle1.fill("red");
+    isFinishGame = true;
+    showErrorAlert(true);
+  }
+  if(player.x() === (obstacle2.x() + 50) && player.y() ===( obstacle2.y() + 50)){
+    obstacle2.fill("red");
+    isFinishGame = true;
+    showErrorAlert(true);
+  }
 }
 
 function moveBackward(){
   current_status = direction_backward_change[current_status];
   updatePlayerAsset();
   move();
+  if(player.x() === (obstacle1.x() + 50) && player.y() ===( obstacle1.y() + 50)){
+    obstacle1.fill("red");
+    isFinishGame = true;
+    showErrorAlert(true);
+  }
+  if(player.x() === (obstacle2.x() + 50) && player.y() ===( obstacle2.y() + 50)){
+    obstacle2.fill("red");
+    isFinishGame = true;
+    showErrorAlert(true);
+  }
 }
 
 function updatePlayerAsset (){
@@ -229,9 +307,16 @@ function placePlayerAtOrigin() {
   console.log('Jugador colocado en la casilla (0, 0)');
 }
 
+function showSuccessAlert(show) { document.getElementById('succes_alert').style.display = show ? 'block' : 'none'; };
+function showErrorAlert(show) { document.getElementById('error_alert').style.display = show ? 'block' : 'none'; };
+showSuccessAlert(false);
+showErrorAlert(false);
+
 function resetGame() {
+  isFinishGame = true;
   clearTimeout(timetou);
   // Restablecer posición inicial
+  meta.fill(META_COLOR);
   playerPosition = { x: 0, y: 0 };
   playerDirection = 'UP';
 
@@ -241,11 +326,11 @@ function resetGame() {
   placePlayerAtOrigin();
   placeMetaAtOrigin();
   console.log('El juego se ha reiniciado.');
+  showSuccessAlert(false);
 }
 
 // Función para mostrar un mensaje de error
 function showError(message) {
-  isFinishGame = true;
   alert(message);
   resetGame();
 }
@@ -270,11 +355,9 @@ function executeInstruction(instruction) {
 
 
 function checkGameIsFinish(){
-  console.log(player.x());
-  console.log(player.x());
   if(player.x() === (meta.x() + 50) && player.y() ===( meta.y() + 50)){
-    //meta.fill("#ffd15b");
-    showError('Juego completado!!!!');
+    meta.fill("#ffd15b");
+    showSuccessAlert(true);
   }
 }
 

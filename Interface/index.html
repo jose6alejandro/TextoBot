@@ -36,6 +36,7 @@
       align-items: center;
       width: 100%;
       height: 100%;
+      flex-direction: column;
     }
     body {
       background-color: #1a1d30;
@@ -54,10 +55,19 @@
         <label for="formFile" class="form-label white">Cargar instrucciones</label>
         <input class="form-control" type="file" id="fileInput" accept=".txt">
       </div>
-      <button type="button" class="btn btn-success" id="loadInstructionsButton">Ejecutar</button>
+      <div class="flex">
+        <button type="button" class="btn btn-success mr-3" id="loadInstructionsButton">Ejecutar</button>
+        <button onclick="resetGame()" type="button" class="btn btn btn-danger" id="loadInstructionsButton">Reiniciar</button>
+      </div>
     </div>
     <div class="container-game">
       <div id="container"></div>
+      <div id="succes_alert" class="alert alert-success" role="alert">
+        Juego Completado!!!
+      </div>
+      <div id="error_alert" class="alert alert-danger" role="alert">
+        Ups!!! haz caido en un obstaculo, Juego terminado.
+      </div>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/konva@9.2.0/konva.min.js"></script>
