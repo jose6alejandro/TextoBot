@@ -297,10 +297,13 @@ function loadPlayerImage(imagePath) {
 
 function placeObstacleAtOrigin() {
   obstacle1.x((getRandomNumberInRange(2, 6) * GRID_SIZE));
-  obstacle1.y((getRandomNumberInRange(0, 0) * GRID_SIZE));
+  obstacle1.y((getRandomNumberInRange(0, 1) * GRID_SIZE));
   obstacle2.x((getRandomNumberInRange(0, 3) * GRID_SIZE));
   obstacle2.y((getRandomNumberInRange(4, 6) * GRID_SIZE));
   // Redibujar la capa para reflejar los cambios
+  obstacle1.fill(OBSTACLE_COLOR);
+  obstacle2.fill(OBSTACLE_COLOR);
+  showErrorAlert(false);
   layer.batchDraw();
 }
 
@@ -344,6 +347,22 @@ function resetGame() {
   placePlayerAtOrigin();
   placeMetaAtOrigin();
   placeObstacleAtOrigin();
+  console.log('El juego se ha reiniciado.');
+  showSuccessAlert(false);
+}
+function retrytGame() {
+  isFinishGame = true;
+  clearTimeout(timetou);
+  // Restablecer posición inicial
+  meta.fill(META_COLOR);
+  playerPosition = { x: 0, y: 0 };
+  playerDirection = 'UP';
+
+  // Restablecer la imagen inicial
+  loadPlayerImage(imagePath('right'));
+  // Actualizar la posición gráfica
+  placePlayerAtOrigin();
+
   console.log('El juego se ha reiniciado.');
   showSuccessAlert(false);
 }

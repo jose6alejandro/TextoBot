@@ -22,7 +22,7 @@
       padding-top: 2rem;
       padding-bottom: 2rem;
       flex-direction: column;
-      width: 400px;
+      width: 550px;
     }
     .container-app {
       display: flex;
@@ -55,10 +55,12 @@
         <label for="formFile" class="form-label white">Cargar instrucciones</label>
         <input class="form-control" type="file" id="fileInput" accept=".txt">
       </div>
-      <div class="flex">
+      <div class="flex flex-nowrap">
         <button type="button" class="btn btn-success mr-3" id="loadInstructionsButton">Ejecutar</button>
         <button onclick="resetGame()" type="button" class="btn btn btn-danger" id="loadInstructionsButton">Reiniciar</button>
+        <button onclick="retrytGame()" type="button" class="btn btn btn-warning" id="loadInstructionsButton">Intentar nuevamente</button>
       </div>
+      
     </div>
     <div class="container-game">
       <div id="container"></div>
