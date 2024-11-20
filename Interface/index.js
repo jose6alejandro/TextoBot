@@ -45,15 +45,24 @@ function getRandomValueGrid() {
 }
 
 function getRandomNumber(min) {
-  // Asegurarnos de que el mínimo no sea mayor o igual a 6
   if (min >= 5) {
       console.error("El parámetro debe ser menor a 5");
       return null;
   }
-
-  // Generar un número aleatorio mayor a min y menor a 6
-  const max = 5; // Máximo valor posible es 5 porque queremos números menores a 6
+  const max = 5; 
   const randomNumber = Math.floor(Math.random() * (max - min)) + min + 1;
+  return randomNumber;
+}
+
+function getRandomNumberInRange(min, max) {
+  // Asegurarnos de que min sea menor que max
+  if (min >= max) {
+      console.error("El valor de 'min' debe ser menor que el valor de 'max'");
+      return null;
+  }
+
+  // Generar un número aleatorio entre min (incluido) y max (excluido)
+  const randomNumber = Math.floor(Math.random() * (max - min)) + min;
   return randomNumber;
 }
 
@@ -286,9 +295,18 @@ function loadPlayerImage(imagePath) {
   imageObj.src = imagePath;
 }
 
+function placeObstacleAtOrigin() {
+  obstacle1.x((getRandomNumberInRange(2, 6) * GRID_SIZE));
+  obstacle1.y((getRandomNumberInRange(0, 0) * GRID_SIZE));
+  obstacle2.x((getRandomNumberInRange(0, 3) * GRID_SIZE));
+  obstacle2.y((getRandomNumberInRange(4, 6) * GRID_SIZE));
+  // Redibujar la capa para reflejar los cambios
+  layer.batchDraw();
+}
+
 function placeMetaAtOrigin() {
-  meta.x((getRandomValueGrid() * GRID_SIZE));
-  meta.y((getRandomValueGrid() * GRID_SIZE));
+  meta.x((getRandomNumberInRange(3, 6) * GRID_SIZE));
+  meta.y((getRandomNumberInRange(4, 6) * GRID_SIZE));
   // Redibujar la capa para reflejar los cambios
   layer.batchDraw();
 }
@@ -325,6 +343,7 @@ function resetGame() {
   // Actualizar la posición gráfica
   placePlayerAtOrigin();
   placeMetaAtOrigin();
+  placeObstacleAtOrigin();
   console.log('El juego se ha reiniciado.');
   showSuccessAlert(false);
 }
