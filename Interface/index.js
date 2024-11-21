@@ -40,6 +40,25 @@ let player = new Konva.Image({
   height: GRID_SIZE / 2, // Tamaño de la imagen
 });
 
+function playAnotherSound(sound) {
+   
+    if (!sound) {
+      const anotherAudio = new Audio('Game_Over.wav');
+      anotherAudio.play().then(() => {
+          console.log('Otro sonido reproducido correctamente');
+      }).catch(err => {
+          console.error('Error al reproducir el otro sonido:', err);
+      });
+    }else{
+      const anotherAudio = new Audio('Game_Won.wav');
+      anotherAudio.play().then(() => {
+          console.log('Otro sonido reproducido correctamente');
+      }).catch(err => {
+          console.error('Error al reproducir el otro sonido:', err);
+      });    
+    }
+}
+
 function getRandomValueGrid() {
   return Math.floor(Math.random() * 6); // Genera un número entre 0 y 5
 }
@@ -234,14 +253,16 @@ function move() {
 function moveForward(){
   move();
   if(player.x() === (obstacle1.x() + 50) && player.y() ===( obstacle1.y() + 50)){
-    obstacle1.fill("red");
+    obstacle1.fill("#cc0000");
     isFinishGame = true;
     showErrorAlert(true);
+    playAnotherSound(0);
   }
   if(player.x() === (obstacle2.x() + 50) && player.y() ===( obstacle2.y() + 50)){
-    obstacle2.fill("red");
+    obstacle2.fill("#cc0000");
     isFinishGame = true;
     showErrorAlert(true);
+    playAnotherSound(0);
   }
 }
 
@@ -351,6 +372,7 @@ function resetGame() {
   showSuccessAlert(false);
 }
 function retrytGame() {
+  
   isFinishGame = true;
   clearTimeout(timetou);
   // Restablecer posición inicial
@@ -395,6 +417,7 @@ function executeInstruction(instruction) {
 function checkGameIsFinish(){
   if(player.x() === (meta.x() + 50) && player.y() ===( meta.y() + 50)){
     meta.fill("#ffd15b");
+    playAnotherSound(1);
     showSuccessAlert(true);
   }
 }

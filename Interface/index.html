@@ -64,14 +64,48 @@
     </div>
     <div class="container-game">
       <div id="container"></div>
-      <div id="succes_alert" class="alert alert-success" role="alert">
-        Juego Completado!!!
+      <div id="succes_alert" class="alert alert-success p-2" role="alert">
+        ¡Excelente, juego completado!
       </div>
-      <div id="error_alert" class="alert alert-danger" role="alert">
-        Ups!!! haz caido en un obstaculo, Juego terminado.
+      <div id="error_alert" class="alert alert-danger p-2" role="alert">
+        ¡Ups! has caído en un obstáculo, juego terminado.
       </div>
     </div>
   </div>
+  <script>
+        // Crear el objeto de audio
+        const audio = new Audio('Background_Music.mp3'); 
+        audio.loop = true; 
+        audio.volume = 0.3
+       let isPlaying = false;
+
+        // Escuchar el evento de teclado
+        window.addEventListener('keydown', (event) => {
+            if (event.key.toLowerCase() === 'p') { // Detectar la tecla "S"
+                if (isPlaying) {
+                    audio.pause(); // Pausar el audio si está sonando
+                    console.log('Audio detenido');
+                } else {
+                    audio.play().then(() => {
+                        console.log('Audio iniciado');
+                    }).catch(err => {
+                        console.error('Error al reproducir audio:', err);
+                    });
+                }
+                isPlaying = !isPlaying; // Alternar el estado
+            }
+        });
+
+        // Asegurarse de que el archivo de audio cargue correctamente
+        audio.addEventListener('canplaythrough', () => {
+            console.log('Audio listo para reproducirse.');
+        });
+
+        audio.addEventListener('error', () => {
+            console.error('Error al cargar el audio. Verifica la ruta del archivo.');
+        });
+	</script>
+
   <script src="https://cdn.jsdelivr.net/npm/konva@9.2.0/konva.min.js"></script>
   <script src="index.js"></script>
 </body>
